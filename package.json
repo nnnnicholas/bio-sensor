@@ -1,0 +1,11 @@
+{
+  "name": "bio-sensor",
+  "version": "1.0.0",
+  "description": "A server that reads data from an Arduino over serial, saves data to a JSON file, and sends text alerts if the readings exceed a threshold.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "nicholas camera",
+  "license": "ISC"
+}
