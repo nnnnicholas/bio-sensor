@@ -1,3 +1,14 @@
+// import secrets
+
+const fs = require('fs'); // import file system
+
+var secrets = fs.readFileSync('secrets.json');
+secrets = JSON.parse(secrets);
+
+var accountSid = secrets.accountSid;
+var authToken = secrets.authToken;
+
+
 var SerialPort = require('serialport'); // include the library
 // get port name from the command line:
 const portName = process.argv[2];
@@ -37,17 +48,12 @@ function showError(error) {
 
 
 // Twilio logic
-
-// Download the helper library from https://www.twilio.com/docs/node/install
-// Your Account Sid and Auth Token from twilio.com/console
-// DANGER! This is insecure. See http://twil.io/secure
-const accountSid = 'ACCOUNT SID';
-const authToken = 'AUTH TOKEN';
 const client = require('twilio')(accountSid, authToken);
 
 function checkThreshold(data, threshLow, threshHigh) {
     if (data < threshLow || data > threshHigh) {
-    	var msgBody = "Temperature out of bounds.\r\nTemperature: " + data + "°C\r\nRange: " + threshLow + "°C to " + threshHigh + "°C."
+        data = data.substring(0, 4);
+        var msgBody = "Temperature out of bounds.\r\nTemperature: " + data + "°C\r\nRange: " + threshLow + "°C to " + threshHigh + "°C."
         client.messages
             .create({
                 body: msgBody,
