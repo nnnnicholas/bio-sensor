@@ -1,8 +1,17 @@
+// import secrets
+
+const fs = require('fs'); // import file system
+
+var secrets = fs.readFileSync('secrets.json');
+secrets = JSON.parse(secrets);
+
+var accountSid = secrets.accountSid;
+var authToken = secrets.authToken;
+
+
 // Download the helper library from https://www.twilio.com/docs/node/install
 // Your Account Sid and Auth Token from twilio.com/console
 // DANGER! This is insecure. See http://twil.io/secure
-const accountSid = 'ACCOUNT SID';
-const authToken = 'AUTH TOKEN';
 const client = require('twilio')(accountSid, authToken);
 
 client.messages
