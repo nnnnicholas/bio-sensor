@@ -1,20 +1,17 @@
 // import secrets
-
 const fs = require('fs'); // import file system
+var secrets = fs.readFileSync('secrets.json'); // read secrets.json
+secrets = JSON.parse(secrets); // parse secrets
 
-var secrets = fs.readFileSync('secrets.json');
-secrets = JSON.parse(secrets);
-
-var accountSid = secrets.accountSid;
+var accountSid = secrets.accountSid; // assign secrets to variables
 var authToken = secrets.authToken;
 
-
 var SerialPort = require('serialport'); // include the library
-// get port name from the command line:
-const portName = process.argv[2];
-
+const portName = process.argv[2]; // get port name from the command line:
 const threshLow = process.argv[3]; // define lower bounds threshhold in Celsius
 const threshHigh = process.argv[4]; // define upper boudns threshhold in Celsius
+const interval = (process.argv[5] * 1000); // inteval at which to update (in seconds)
+
 
 var myPort = new SerialPort(portName, 9600);
 
@@ -33,9 +30,11 @@ function showPortOpen() {
     console.log('port open. Data rate: ' + myPort.baudRate);
 }
 
+var currentTemp = null;
+
 function readSerialData(data) {
-    console.log(data);
-    checkThreshold(data, threshLow, threshHigh);
+    currentTemp = parseFloat(data); // parse serial data string as float
+    // console.log(currentTemp);
 }
 
 function showPortClose() {
@@ -47,20 +46,31 @@ function showError(error) {
 }
 
 
-// Twilio logic
+// Twilio 
 const client = require('twilio')(accountSid, authToken);
 
-function checkThreshold(data, threshLow, threshHigh) {
-    if (data < threshLow || data > threshHigh) {
-        data = data.substring(0, 4);
-        var msgBody = "Temperature out of bounds.\r\nTemperature: " + data + "°C\r\nRange: " + threshLow + "°C to " + threshHigh + "°C."
-        client.messages
-            .create({
-                body: msgBody,
-                from: '+15145008028',
-                to: '+15149462453'
-            })
-            .then(message => console.log(message + "\r\n" + message.sid));
+setInterval(checkThreshold, interval); // Set interval at which to evaluate sensor readings
 
+var temperatureBuffer = [];
+
+function checkThreshold() {
+    console.log(currentTemp);
+    temperatureBuffer.push({ "time": new Date(), "tepmerature": currentTemp });
+    if (temperatureBuffer.length >= 60000 / interval) { // Every 1 minute, save the buffer to disk then clear its contents
+    	// write to disk
+    };
+    if (currentTemp === null) {
+        console.log("data is null");
+    } else if (currentTemp < threshLow || currentTemp > threshHigh) {
+        // currentTemp = currentTemp.substring(0, 4);
+        var msgBody = "Temperature out of bounds.\r\nTemperature: " + currentTemp + "°C\r\nRange: " + threshLow + "°C to " + threshHigh + "°C."
+        console.log("Sending text : " + msgBody);
+        // client.messages
+        //     .create({
+        //         body: msgBody,
+        //         from: '+15145008028',
+        //         to: '+15149462453'
+        //     })
+        //     .then(message => console.log(message + "\r\n" + message.sid));
     }
 }
