@@ -1,12 +1,12 @@
 # bio-sensor
 
-## Description
+## Description 📚
 A server that reads data from an Arduino over serial, saves data to a JSON file, and sends text alerts if the readings exceed a threshold.
 
-## System Requirements
+## System Requirements 💽
 This software is written and tested on Linux. It should work on Mac. The software reads the temperature from the serial port, which I haven't figured out how to do on Windows yet. 
 
-## Getting Started
+## Getting Started 🙎
 0. If you do not have recent versions already installed, install NodeJS and Arduino for your platform. This guide is written for Linux but should work well on Mac. I have not yet successfully gotten this working on Windows, but I intend to do so soon.
 1. In the command line, clone the repo with `$ git clone https://github.com/nnnnicholas/bio-sensor.git`
 2. `cd` into the directory where the repo is cloned. Install the dependencies with `npm install`
